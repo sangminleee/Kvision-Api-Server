@@ -41,16 +41,23 @@ jobs:
           PR_TITLE="Merge $BRANCH_NAME into aivi"
           PR_BODY="This PR was automatically created to merge $BRANCH_NAME into the aivi branch."
 
+          # JSON body 값을 변수에 저장
+          JSON_BODY=$(cat <<EOF
+          {
+            "title": "$PR_TITLE",
+            "head": "$BRANCH_NAME",
+            "base": "aivi",
+            "body": "$PR_BODY"
+          }
+          EOF
+          )
+
+          # JSON body 값 출력
+          echo "JSON Body: $JSON_BODY"
+
           curl -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/pulls \
-            -d @- <<EOF
-            {
-              "title": "$PR_TITLE",
-              "head": "$BRANCH_NAME",
-              "base": "aivi",
-              "body": "$PR_BODY"
-            }
-            EOF
+            -d "$JSON_BODY"
