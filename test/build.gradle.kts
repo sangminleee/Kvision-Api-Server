@@ -19,6 +19,14 @@ kotlin {
     jvmToolchain(17)
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "TestKt"
+    }
+
+    from(configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { if (it.isDirectory) it else zipTree(it) })
+}
+
 // 아래 부분을 수정하여 덮어쓰기 설정을 명시합니다.
 tasks.register<Copy>("copyJarToDocker") {
     dependsOn(tasks.jar)
