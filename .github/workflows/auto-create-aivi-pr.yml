@@ -2,7 +2,7 @@ name: Check and Create PR
 
 on:
   pull_request:
-    types: [closed]
+    types: [ closed ]
 
 jobs:
   check-label-and-create-pr:
@@ -42,15 +42,15 @@ jobs:
           PR_BODY="This PR was automatically created to merge $BRANCH_NAME into the aivi branch."
 
           curl -L \
-	          -X POST \
+            -X POST \
             -H "Accept: application/vnd.github+json" \
-		        -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/pulls \
             -d @- <<EOF
-          {
-            "title": "$PR_TITLE",
-            "head": "$BRANCH_NAME",
-            "base": "aivi",
-            "body": "$PR_BODY"
-          }
-          EOF
+            {
+              "title": "$PR_TITLE",
+              "head": "$BRANCH_NAME",
+              "base": "aivi",
+              "body": "$PR_BODY"
+            }
+            EOF
