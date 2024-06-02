@@ -1,0 +1,99 @@
+name: Release and Deploy
+
+on:
+  workflow_dispatch:  # 수동으로 워크플로우를 트리거할 수 있도록 설정
+
+env:
+  CONTAINER_CONTEXT_PATH: "docker"
+  DOCKERFILE_PATH: "docker/Dockerfile"
+
+jobs:
+  check-prs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Tag PRs as released
+        id: tag_prs
+        run: |
+          gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number' > pr_numbers.txt
+          if [ -s pr_numbers.txt ]; then
+            echo "PRs to be tagged as released found."
+            echo "::set-output name=is_empty::false"
+          else
+            echo "No PRs to tag."
+            echo "::set-output name=is_empty::true"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  release-drafter:
+    needs: check-prs
+    runs-on: ubuntu-latest
+    if: needs.check-prs.outputs.is_empty == 'false'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Generate version tag
+        id: version
+        run: echo ::set-output name=tag::aivi-$(date +'%Y%m%d')
+
+      - name: Run release-drafter
+        uses: release-drafter/release-drafter@v5
+        with:
+          config-name: release-drafter-configs/create-draft-project.yml
+          version: ${{ steps.version.outputs.tag }}
+
+  build-and-deploy:
+    needs: release-drafter
+    runs-on: ubuntu-latest
+    if: needs.check-prs.outputs.is_empty == 'false'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build release package
+        uses: gradle/gradle-build-action@v3
+        with:
+          arguments: build
+          cache-read-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG="${{ needs.release-drafter.outputs.tag }}"
+          docker build ${{ env.CONTAINER_CONTEXT_PATH }} --file ${{ env.DOCKERFILE_PATH }} --tag nalsm0801/ovision-server:$IMAGE_TAG
+          docker push nalsm0801/ovision-server:$IMAGE_TAG
+
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  tag-as-released:
+    needs: [release-drafter, build-and-deploy]
+    runs-on: ubuntu-latest
+    if: needs.check-prs.outputs.is_empty == 'false'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Tag PRs as released
+        run: |
+          while IFS= read -r pr; do
+            gh pr edit $pr --add-label "released"
+          done < pr_numbers.txt
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
