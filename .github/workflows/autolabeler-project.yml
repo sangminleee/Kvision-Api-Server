@@ -18,4 +18,3 @@ jobs:
           config-name: release-drafter-configs/create-draft-project.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-
