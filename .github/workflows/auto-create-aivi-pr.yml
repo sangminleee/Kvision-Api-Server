@@ -45,8 +45,8 @@ jobs:
         if: steps.check_pr.outputs.continue == 'true'
         id: create_pr
         run: |
-          BRANCH_NAME=${{ github.event.pull_request.head.ref }}
-          PR_TITLE=${{ steps.check_pr.outputs.pr_title }}
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          PR_TITLE="${{ steps.check_pr.outputs.pr_title }}"
           PR_BODY="This PR was automatically created to merge $BRANCH_NAME into the aivi branch."
 
           # JSON body 값을 변수에 저장
