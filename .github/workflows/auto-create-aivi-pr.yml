@@ -71,7 +71,7 @@ jobs:
       - name: Merge the new PR
         run: |
           PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
-          curl -L\
+          curl -L \
             -X PUT \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
