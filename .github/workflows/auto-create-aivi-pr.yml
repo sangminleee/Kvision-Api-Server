@@ -55,10 +55,58 @@ jobs:
           # JSON body 값 출력
           echo "JSON Body: $JSON_BODY"
 
-          curl -L \
+          RESPONSE=$(curl -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/${{ github.repository }}/pulls \
-            -d "$JSON_BODY"
+            -d "$JSON_BODY")
+
+          # PR 번호 추출
+          PR_NUMBER=$(echo $RESPONSE | jq -r '.number')
+          echo "Created PR Number: $PR_NUMBER"
+          echo "::set-output name=pr_number::$PR_NUMBER"
+
+      - name: Wait and Check if PR Exists
+        id: wait_and_check
+        run: |
+          PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
+          MAX_ATTEMPTS=10
+          COUNT=0
+          while [ $COUNT -lt $MAX_ATTEMPTS ]; do
+            PR_CHECK_RESPONSE=$(curl -L \
+              -X GET \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER)
+
+            PR_EXISTS=$(echo $PR_CHECK_RESPONSE | jq -r '.number != null')
+
+            if [ "$PR_EXISTS" == "true" ]; then
+              echo "PR $PR_NUMBER exists. Proceeding to merge."
+              break
+            fi
+
+            echo "PR $PR_NUMBER does not exist yet. Waiting for 1 second..."
+            sleep 1
+            COUNT=$((COUNT + 1))
+          done
+
+          if [ "$PR_EXISTS" != "true" ]; then
+            echo "PR $PR_NUMBER did not appear after 10 attempts. Exiting."
+            exit 1
+          fi
+
+      - name: Merge the new PR
+        needs: [wait_and_check]
+        run: |
+          PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
+          curl -L \
+            -X PUT \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/merge \
+            -d '{"merge_method":"merge"}'
