@@ -14,11 +14,13 @@ jobs:
         run: |
           if [ "${{ github.event.pull_request.merged }}" != "true" ]; then
             echo "PR was not merged. Exiting."
+            echo "::set-output name=continue::false"
             exit 0
           fi
 
           if [ "${{ github.event.pull_request.base.ref }}" != "develop" ]; then
             echo "PR base branch is not 'develop'. Exiting."
+            echo "::set-output name=continue::false"
             exit 0
           fi
 
@@ -30,12 +32,15 @@ jobs:
 
           if [[ "$LABELS" != *"aivi"* ]]; then
             echo "PR does not have 'aivi' label. Exiting."
+            echo "::set-output name=continue::false"
             exit 0
           fi
 
           echo "PR has 'aivi' label and targets 'develop' branch. Proceeding to create a new PR."
+          echo "::set-output name=continue::true"
 
       - name: Create a new PR to aivi branch
+        if: steps.check_pr.outputs.continue == 'true'
         id: create_pr
         run: |
           BRANCH_NAME=${{ github.event.pull_request.head.ref }}
@@ -70,6 +75,7 @@ jobs:
           echo "::set-output name=pr_number::$PR_NUMBER"
 
       - name: Wait and Check if PR Exists
+        if: steps.check_pr.outputs.continue == 'true'
         id: wait_and_check
         run: |
           PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
@@ -101,6 +107,7 @@ jobs:
           fi
 
       - name: Merge the new PR
+        if: steps.check_pr.outputs.continue == 'true'
         run: |
           PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
           curl -L \
