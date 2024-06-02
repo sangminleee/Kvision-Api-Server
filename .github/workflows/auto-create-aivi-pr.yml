@@ -55,7 +55,7 @@ jobs:
           # JSON body 값 출력
           echo "JSON Body: $JSON_BODY"
 
-          RESPONSE=(curl -L \
+          RESPONSE=$(curl -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
