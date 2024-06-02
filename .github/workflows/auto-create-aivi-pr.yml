@@ -36,6 +36,7 @@ jobs:
           echo "PR has 'aivi' label and targets 'develop' branch. Proceeding to create a new PR."
 
       - name: Create a new PR to aivi branch
+        id: create_pr
         run: |
           BRANCH_NAME=${{ github.event.pull_request.head.ref }}
           PR_TITLE="Merge $BRANCH_NAME into aivi"
@@ -100,7 +101,6 @@ jobs:
           fi
 
       - name: Merge the new PR
-        needs: [wait_and_check]
         run: |
           PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
           curl -L \
