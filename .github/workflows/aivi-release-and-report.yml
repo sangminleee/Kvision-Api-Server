@@ -10,9 +10,6 @@ env:
 jobs:
   check-prs:
     runs-on: ubuntu-latest
-    outputs:
-      is_empty: ${{ steps.tag_prs.outputs.is_empty }}
-      pr_numbers: ${{ steps.tag_prs.outputs.pr_numbers }}
 
     steps:
       - name: Checkout repository
@@ -37,8 +34,6 @@ jobs:
     needs: check-prs
     runs-on: ubuntu-latest
     if: needs.check-prs.outputs.is_empty == false
-    outputs:
-      tag: ${{ steps.version.outputs.tag }}
 
     steps:
       - name: Checkout repository
