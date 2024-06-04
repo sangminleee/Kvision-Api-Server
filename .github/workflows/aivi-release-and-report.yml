@@ -11,7 +11,8 @@ jobs:
   check-prs:
     runs-on: ubuntu-latest
     outputs:
-      is_empty: ${{ steps.tag_prs.is_empty }}
+      is_empty: ${{ steps.tag_prs.outputs.is_empty }}
+      pr_numbers: ${{ steps.tag_prs.outputs.pr_numbers }}
 
     steps:
       - name: Checkout repository
@@ -23,11 +24,11 @@ jobs:
           pr_numbers=$(gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number')
           if [ -n "$pr_numbers" ]; then
             echo "PRs to be tagged as released found."
-            echo "::set-output name=is_empty::false"
-            echo "::set-output name=pr_numbers::$pr_numbers"
+            echo "is_empty=false" >> "$GITHUB_OUTPUT"
+            echo "pr_numbers=$pr_numbers" >> "$GITHUB_OUTPUT"
           else
             echo "No PRs to tag."
-            echo "::set-output name=is_empty::true"
+            echo "is_empty=true" >> "$GITHUB_OUTPUT"
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -36,6 +37,8 @@ jobs:
     needs: check-prs
     runs-on: ubuntu-latest
     if: needs.check-prs.outputs.is_empty == false
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
 
     steps:
       - name: Checkout repository
@@ -45,7 +48,7 @@ jobs:
         id: version
         run: |
           date_version=$(date +'%Y%m%d-%H%M%S')
-          echo "::set-output name=tag::aivi-$date_version"
+          echo "tag=aivi-$date_version" >> "$GITHUB_OUTPUT"
 
       - name: Run release-drafter
         uses: release-drafter/release-drafter@v5
