@@ -66,8 +66,6 @@ jobs:
         with:
           arguments: build
           cache-read-only: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
