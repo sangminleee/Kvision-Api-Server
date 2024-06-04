@@ -34,7 +34,7 @@ jobs:
   release-drafter:
     needs: check-prs
     runs-on: ubuntu-latest
-    if: needs.check-prs.outputs.is_empty == 'false'
+    if: needs.check-prs.outputs.is_empty == false
 
     steps:
       - name: Checkout repository
@@ -53,7 +53,7 @@ jobs:
   build-and-deploy:
     needs: release-drafter
     runs-on: ubuntu-latest
-    if: needs.check-prs.outputs.is_empty == 'false'
+    if: needs.check-prs.outputs.is_empty == false
 
     steps:
       - name: Checkout repository
@@ -86,7 +86,7 @@ jobs:
   tag-as-released:
     needs: [release-drafter, build-and-deploy]
     runs-on: ubuntu-latest
-    if: needs.check-prs.outputs.is_empty == 'false'
+    if: needs.check-prs.outputs.is_empty == false
 
     steps:
       - name: Checkout repository
