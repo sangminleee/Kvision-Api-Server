@@ -20,10 +20,11 @@ jobs:
       - name: Tag PRs as released
         id: tag_prs
         run: |
-          gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number' > pr_numbers.txt
-          if [ -s pr_numbers.txt ]; then
+          pr_numbers=$(gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number')
+          if [ -n "$pr_numbers" ]; then
             echo "PRs to be tagged as released found."
             echo "::set-output name=is_empty::false"
+            echo "::set-output name=pr_numbers::$pr_numbers"
           else
             echo "No PRs to tag."
             echo "::set-output name=is_empty::true"
@@ -105,8 +106,9 @@ jobs:
 
       - name: Tag PRs as released
         run: |
-          while IFS= read -r pr; do
+          pr_numbers=${{ needs.check-prs.outputs.pr_numbers }}
+          for pr in $pr_numbers; do
             gh pr edit $pr --add-label "released"
-          done < pr_numbers.txt
+          done
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
