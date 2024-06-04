@@ -45,7 +45,7 @@ jobs:
 
       - name: Generate version tag
         id: version
-        run: echo ::set-output name=tag::aivi-$(date +'%Y%m%d')
+        run: echo "::set-output name=tag::aivi-$(date +'%Y%m%d-%H%M%S')"
 
       - name: Run release-drafter
         uses: release-drafter/release-drafter@v5
