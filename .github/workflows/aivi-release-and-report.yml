@@ -22,6 +22,7 @@ jobs:
         id: tag_prs
         run: |
           pr_numbers_var=$(gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number')
+          echo "pr_numbers=$pr_numbers"
           if [ -n "$pr_numbers" ]; then
             echo "PRs to be tagged as released found."
             echo "is_empty=false" >> "$GITHUB_OUTPUT"
@@ -48,6 +49,7 @@ jobs:
         id: version
         run: |
           date_version=$(date +'%Y%m%d-%H%M%S')
+          echo "date_version=$date_version"
           echo "tag=aivi-$date_version" >> "$GITHUB_OUTPUT"
 
       - name: Run release-drafter
