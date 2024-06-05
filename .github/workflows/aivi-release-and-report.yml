@@ -10,6 +10,9 @@ env:
 jobs:
   check-prs:
     runs-on: ubuntu-latest
+    outputs:
+      is_empty: ${{ steps.tag_prs.is_empty }}
+      pr_numbers: ${{ steps.tag_prs.pr_numbers }}
 
     steps:
       - name: Checkout repository
@@ -18,11 +21,13 @@ jobs:
       - name: Tag PRs as released
         id: tag_prs
         run: |
-          pr_numbers=$(gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number')
+          pr_numbers_var=$(gh pr list --state closed --base aivi --json \
+            number,title,labels --jq '.[] | select(.labels | map(.name) | \
+            index("released") | not) | .number')
           if [ -n "$pr_numbers" ]; then
             echo "PRs to be tagged as released found."
             echo "is_empty=false" >> "$GITHUB_OUTPUT"
-            echo "pr_numbers=$pr_numbers" >> "$GITHUB_OUTPUT"
+            echo "pr_numbers=$pr_numbers_var" >> "$GITHUB_OUTPUT"
           else
             echo "No PRs to tag."
             echo "is_empty=true" >> "$GITHUB_OUTPUT"
@@ -34,6 +39,8 @@ jobs:
     needs: check-prs
     runs-on: ubuntu-latest
     if: needs.check-prs.outputs.is_empty == false
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
 
     steps:
       - name: Checkout repository
