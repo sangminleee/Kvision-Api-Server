@@ -21,40 +21,40 @@ categories:
 autolabeler:
   - label: 'enhancement'
     title:
-      - '/feat\:.+/'
+      - '/\[AIVI\] feat\:.+/'
   - label: 'fix'
     title:
-      - '/fix\:.+/'
+      - '/[AIVI] fix\:.+/'
   - label: 'bug'
     title:
-      - '/bug\:.+/'
+      - '/[AIVI] bug\:.+/'
   - label: 'hot'
     title:
-      - '/hot\:.+/'
+      - '/[AIVI] hot\:.+/'
   - label: 'refactor'
     title:
-      - '/refactor\:.+/'
+      - '/[AIVI] refactor\:.+/'
   - label: 'chore'
     title:
-      - '/chore\:.+/'
+      - '/[AIVI] chore\:.+/'
   - label: 'documentation'
     title:
-      - '/docs{0,1}\:.+/'
+      - '/[AIVI] docs{0,1}\:.+/'
   - label: 'style'
     title:
-      - '/style\:.+/'
+      - '/[AIVI] style\:.+/'
   - label: 'test'
     title:
-      - '/test\:.+/'
+      - '/[AIVI] test\:.+/'
   - label: 'dependencies'
     title:
-      - '/dep\:.+/'
+      - '/[AIVI] dep\:.+/'
   - label: 'work in progress'
     title:
-      - '/\:wip.+/'
+      - '/[AIVI] \:wip.+/'
   - label: 'follow up'
     title:
-      - '/\:fu.+/'
+      - '/[AIVI] \:fu.+/'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 exclude-labels: # develop -> main 으로 가는 PR 을 릴리즈 노트에서 표시하지 않도록
   - 'release'

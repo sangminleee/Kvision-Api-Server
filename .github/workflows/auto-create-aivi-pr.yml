@@ -52,7 +52,7 @@ jobs:
           # JSON body 값을 변수에 저장
           JSON_BODY=$(cat <<EOF
           {
-            "title": "$PR_TITLE",
+            "title": "[AIVI] $PR_TITLE",
             "head": "$BRANCH_NAME",
             "base": "aivi",
             "body": "$PR_BODY"
