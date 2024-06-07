@@ -6,7 +6,7 @@ categories:
 autolabeler:
   - label: 'merge-aivi'
     title:
-      - '/\[AIVI\]\:.+/'
+      - '/\[AIVI\].+/'
 change-title-escapes: '\<*_&'
 exclude-labels:
   - 'released'
