@@ -1,5 +1,5 @@
-name-template: 'v$RESOLVED_VERSION'
-tag-template: 'v$RESOLVED_VERSION'
+name-template: '$RESOLVED_VERSION'
+tag-template: '$RESOLVED_VERSION'
 categories:
   - title: '🔥 HotFixes'
     label: 'hot'
@@ -61,7 +61,7 @@ exclude-labels: # develop -> main 으로 가는 PR 을 릴리즈 노트에서 �
   - 'wip'
   - 'work in progress'
   - 'follow up'
-change-template: '- ${title} (#${number})'
+change-template: '- $TITLE (#$NUMBER)'
 template: |
   ## Changes
   $CHANGES
