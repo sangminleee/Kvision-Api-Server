@@ -10,6 +10,17 @@ autolabeler:
 change-title-escapes: '\<*_&'
 exclude-labels:
   - 'released'
+  - 'hot'
+  - 'fix'
+  - 'aivi'
+  - 'bug'
+  - 'refactor'
+  - 'chore'
+  - 'documentation'
+  - 'style'
+  - 'dependencies'
+  - 'work in progress'
+  - 'follow up'
 change-template: '- $TITLE (#$NUMBER)'
 template: |
   ## Changes
