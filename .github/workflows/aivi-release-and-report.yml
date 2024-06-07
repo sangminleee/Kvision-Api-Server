@@ -12,9 +12,6 @@ env:
 jobs:
   check-prs:
     runs-on: ubuntu-latest
-#    outputs:
-#      is_empty: ${{ steps.tag_prs.outputs.is_empty }}
-#      pr_numbers: ${{ steps.tag_prs.outputs.pr_numbers }}
 
     steps:
       - name: Checkout repository
@@ -105,7 +102,7 @@ jobs:
 
       - name: Tag PRs as released
         run: |
-          pr_numbers=${{ needs.check-prs.outputs.pr_numbers }}
+          pr_numbers="${{ needs.check-prs.outputs.pr_numbers }}"
           echo $pr_numbers
           for pr in $pr_numbers; do
             gh pr edit $pr --add-label "released"
