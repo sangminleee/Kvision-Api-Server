@@ -23,7 +23,7 @@ jobs:
       - name: Tag PRs as released
         id: tag_prs
         run: |
-          pr_numbers_var=$(gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number') | tr '\n' ' '
+          pr_numbers_var=$(gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number' | tr '\n' ' ')
           echo "pr_numbers=$pr_numbers_var"
           if [ -n "$pr_numbers" ]; then
             echo "PRs to be tagged as released found."
