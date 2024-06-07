@@ -1,5 +1,5 @@
-name-template: 'Release ${version}'
-tag-template: 'v${version}'
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
 categories:
   - title: '🔥 HotFixes'
     label: 'hot'
