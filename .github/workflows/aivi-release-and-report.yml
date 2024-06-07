@@ -9,6 +9,9 @@ env:
   CONTAINER_REGISTRY_URL: "nalsm0801"
   DOCKER_IMAGE_PATH: "ovision-server"
 
+permissions:
+  contents: read
+
 jobs:
   check-prs:
     runs-on: ubuntu-latest
