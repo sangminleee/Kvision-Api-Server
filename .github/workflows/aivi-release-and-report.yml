@@ -89,7 +89,7 @@ jobs:
       - name: Build And Push the Docker image
         run: |
           tag="${{ env.CONTAINER_REGISTRY_URL }}/${{ env.DOCKER_IMAGE_PATH }}:${{ needs.release-drafter.outputs.tag }}"
-          echo $tag
+          echo "tag=$tag"
           docker build ${{ env.CONTAINER_CONTEXT_PATH }} --file ${{ env.DOCKERFILE_PATH }} --tag $tag
           docker push $tag
 
@@ -105,7 +105,7 @@ jobs:
       - name: Tag PRs as released
         run: |
           pr_numbers="${{ needs.check-prs.outputs.pr_numbers }}"
-          echo $pr_numbers
+          echo "pr_numbers=$pr_numbers"
           for pr in $pr_numbers; do
             gh pr edit $pr --add-label "released"
           done
