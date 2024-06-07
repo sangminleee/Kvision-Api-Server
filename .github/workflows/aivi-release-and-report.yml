@@ -25,13 +25,13 @@ jobs:
         run: |
           pr_numbers_var=$(gh pr list --state closed --base aivi --json number,title,labels --jq '.[] | select(.labels | map(.name) | index("released") | not) | .number' | tr '\n' ' ')
           echo "pr_numbers=$pr_numbers_var"
-          if [ -n "$pr_numbers" ]; then
+          if [ ${#pr_numbers_var[@]} -eq 0 ]; then
+            echo "No PRs to tag."
+            echo "is_empty=true" >> "$GITHUB_OUTPUT"
+          else
             echo "PRs to be tagged as released found."
             echo "is_empty=false" >> "$GITHUB_OUTPUT"
             echo "pr_numbers=$pr_numbers_var" >> "$GITHUB_OUTPUT"
-          else
-            echo "No PRs to tag."
-            echo "is_empty=true" >> "$GITHUB_OUTPUT"
           fi
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
