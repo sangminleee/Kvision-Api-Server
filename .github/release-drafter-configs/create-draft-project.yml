@@ -8,6 +8,8 @@ autolabeler:
     title:
       - '/\[AIVI\].+/'
 change-title-escapes: '\<*_&'
+include-labels:
+  - 'merge-aivi'
 exclude-labels:
   - 'released'
   - 'hot'
