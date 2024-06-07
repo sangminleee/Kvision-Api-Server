@@ -33,7 +33,7 @@ jobs:
             echo "pr_numbers=$pr_numbers_var" >> "$GITHUB_OUTPUT"
           fi
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
   release-drafter:
     needs: check-prs
@@ -110,4 +110,4 @@ jobs:
             gh pr edit $pr --add-label "released"
           done
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
