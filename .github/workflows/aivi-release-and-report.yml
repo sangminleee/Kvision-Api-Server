@@ -12,6 +12,8 @@ env:
 jobs:
   check-prs:
     runs-on: ubuntu-latest
+    outputs:
+      pr_numbers: ${{ steps.tag_prs.outputs.pr_numbers }}
 
     steps:
       - name: Checkout repository
