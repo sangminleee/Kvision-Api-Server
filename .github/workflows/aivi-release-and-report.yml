@@ -50,7 +50,7 @@ jobs:
       - name: Generate version tag
         id: version
         run: |
-          date_version=$(date +'%Y%m%d-%H%M%S')
+          date_version=$(TZ='Asia/Seoul' date +'%Y%m%d')
           echo "date_version=$date_version"
           echo "tag=aivi-$date_version"
           echo "tag=aivi-$date_version" >> "$GITHUB_OUTPUT"
@@ -95,7 +95,7 @@ jobs:
           docker push $tag
 
   tag-as-released:
-    needs: [release-drafter, build-and-deploy]
+    needs: [release-drafter, build-and-deploy, check-prs]
     runs-on: ubuntu-latest
     if: needs.check-prs.outputs.is_empty == false
 
