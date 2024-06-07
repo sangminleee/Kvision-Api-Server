@@ -23,6 +23,3 @@ exclude-labels:
   - 'follow up'
 change-template: '- $TITLE (#$NUMBER)'
 commitish: aivi
-template: |
-  ## Changes
-  $CHANGES
