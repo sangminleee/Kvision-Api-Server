@@ -24,7 +24,7 @@ exclude-labels:
 change-template: '- $TITLE (#$NUMBER)'
 commitish: aivi
 filter-by-commitish: true
-templates: |
+template: |
   ## Changes
 
   $CHANGES
