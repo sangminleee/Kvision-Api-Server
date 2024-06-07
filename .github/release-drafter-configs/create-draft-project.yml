@@ -2,9 +2,13 @@ name-template: '$RESOLVED_VERSION'
 tag-template: '$RESOLVED_VERSION'
 categories:
   - title: 'Changes'
-    label: 'aivi'
-change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
-exclude-labels: # develop -> main 으로 가는 PR 을 릴리즈 노트에서 표시하지 않도록
+    label: 'merge-aivi'
+autolabeler:
+  - label: 'merge-aivi'
+    title:
+      - '/\[AIVI\]\:.+/'
+change-title-escapes: '\<*_&'
+exclude-labels:
   - 'released'
 change-template: '- $TITLE (#$NUMBER)'
 template: |
