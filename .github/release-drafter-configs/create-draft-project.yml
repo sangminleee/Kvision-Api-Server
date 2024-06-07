@@ -27,6 +27,4 @@ change-template: '- $TITLE (#$NUMBER)'
 commitish: aivi
 filter-by-commitish: true
 template: |
-  ## Changes
-
   $CHANGES
