@@ -27,7 +27,7 @@ jobs:
           echo "pr_numbers=$pr_numbers_var"
           if [ -z "$pr_numbers_var" ]; then
             echo "No PRs to tag."
-            echo "is_empty=false" >> "$GITHUB_OUTPUT"
+            echo "is_empty=true" >> "$GITHUB_OUTPUT"
           else
             echo "PRs to be tagged as released found."
             echo "is_empty=false" >> "$GITHUB_OUTPUT"
