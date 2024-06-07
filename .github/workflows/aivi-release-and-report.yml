@@ -13,6 +13,7 @@ jobs:
   check-prs:
     runs-on: ubuntu-latest
     outputs:
+      is_empty: ${{ steps.tag_prs.outputs.is_empty }}
       pr_numbers: ${{ steps.tag_prs.outputs.pr_numbers }}
 
     steps:
