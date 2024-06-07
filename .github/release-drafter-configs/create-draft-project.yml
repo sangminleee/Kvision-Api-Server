@@ -1,66 +1,11 @@
 name-template: '$RESOLVED_VERSION'
 tag-template: '$RESOLVED_VERSION'
 categories:
-  - title: '🔥 HotFixes'
-    label: 'hot'
-  - title: '🚀 New Features'
-    label: 'enhancement'
-  - title: '🛠️ Feature Changes'
-    label: 'fix'
-  - title: '🐛 Bug Fixes'
-    label: 'bug'
-  - title: '🧰 Maintenance'
-    labels:
-      - 'chore'
-      - 'documentation'
-      - 'refactor'
-      - 'test'
-      - 'style'
-  - title: '🤖 Dependencies'
-    label: 'dependencies'
-autolabeler:
-  - label: 'enhancement'
-    title:
-      - '/\[AIVI\] feat\:.+/'
-  - label: 'fix'
-    title:
-      - '/[AIVI] fix\:.+/'
-  - label: 'bug'
-    title:
-      - '/[AIVI] bug\:.+/'
-  - label: 'hot'
-    title:
-      - '/[AIVI] hot\:.+/'
-  - label: 'refactor'
-    title:
-      - '/[AIVI] refactor\:.+/'
-  - label: 'chore'
-    title:
-      - '/[AIVI] chore\:.+/'
-  - label: 'documentation'
-    title:
-      - '/[AIVI] docs{0,1}\:.+/'
-  - label: 'style'
-    title:
-      - '/[AIVI] style\:.+/'
-  - label: 'test'
-    title:
-      - '/[AIVI] test\:.+/'
-  - label: 'dependencies'
-    title:
-      - '/[AIVI] dep\:.+/'
-  - label: 'work in progress'
-    title:
-      - '/[AIVI] \:wip.+/'
-  - label: 'follow up'
-    title:
-      - '/[AIVI] \:fu.+/'
+  - title: 'Changes'
+    label: 'aivi'
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 exclude-labels: # develop -> main 으로 가는 PR 을 릴리즈 노트에서 표시하지 않도록
-  - 'release'
-  - 'wip'
-  - 'work in progress'
-  - 'follow up'
+  - 'released'
 change-template: '- $TITLE (#$NUMBER)'
 template: |
   ## Changes
