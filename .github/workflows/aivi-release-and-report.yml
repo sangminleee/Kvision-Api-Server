@@ -66,6 +66,8 @@ jobs:
         with:
           config-name: release-drafter-configs/create-draft-project.yml
           version: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          tag: ${{ steps.version.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
