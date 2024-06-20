@@ -97,11 +97,14 @@ jobs:
           RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/$VERSION_TO_DELETE" | jq -r '.id')
 
-          gh api \
-          --method PATCH \
-          -H "Accept: application/vnd.github+json" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          "/repos/${{ github.repository }}/releases/$RELEASE_ID" -f draft=false -f prerelease=false
+          curl -L \
+            -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID" \
+            -d '{"draft":false, "prerelease":false}'
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
