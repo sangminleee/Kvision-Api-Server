@@ -57,6 +57,27 @@ jobs:
           echo "tag=aivi-$date_version"
           echo "tag=aivi-$date_version" >> "$GITHUB_OUTPUT"
 
+      - name: Delete Release
+        run: |
+          VERSION_TO_DELETE="${{ steps.version.outputs.tag }}" # 삭제하려는 릴리스 버전
+
+          # 릴리스 정보 가져오기
+          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$VERSION_TO_DELETE" | jq -r '.id')
+
+          if [ "$RELEASE_ID" != "null" ]; then
+            # 릴리스 삭제
+            curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID"
+
+            # 태그 삭제
+            git push origin :refs/tags/$VERSION_TO_DELETE
+          else
+            echo "Release with tag $VERSION_TO_DELETE not found."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
       - name: Run release-drafter
         uses: release-drafter/release-drafter@v6
         with:
@@ -68,12 +89,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Release
-        uses: IsaacShelton/update-existing-release@v1.3.4
+        uses: actions/create-release@v1
         with:
-          token: ${{ secrets.GH_TOKEN }}
-          tag: ${{ steps.version.outputs.tag }}
-          release: ${{ steps.version.outputs.tag }}
-          replace: true
+          tag_name: ${{ steps.version.outputs.tag }}
+          release_name: ${{ steps.version.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
   build-and-deploy:
     needs: release-drafter
