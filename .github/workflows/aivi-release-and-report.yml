@@ -78,21 +78,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Run release-drafter
-        uses: release-drafter/release-drafter@v6
-        with:
-          config-name: release-drafter-configs/create-draft-project.yml
-          version: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.tag }}
-          tag: ${{ steps.version.outputs.tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#      - name: Run release-drafter
+#        uses: release-drafter/release-drafter@v6
+#        with:
+#          config-name: release-drafter-configs/create-draft-project.yml
+#          version: ${{ steps.version.outputs.tag }}
+#          name: ${{ steps.version.outputs.tag }}
+#          tag: ${{ steps.version.outputs.tag }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Release
         uses: actions/create-release@v1
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           release_name: ${{ steps.version.outputs.tag }}
+          draft: true
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
