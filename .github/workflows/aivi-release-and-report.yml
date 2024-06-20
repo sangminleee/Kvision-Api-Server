@@ -91,11 +91,9 @@ jobs:
 
       - name: Release the draft
         run: |
-          VERSION_TO_UPDATE="${{ steps.version.outputs.tag }}" # 수정하려는 릴리스 버전
-
           # 릴리스 정보 가져오기
           RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$VERSION_TO_DELETE" | jq -r '.id')
+            "https://api.github.com/repos/${{ github.repository }}/releases" | jq -r '.[] | select(.tag_name == "aivi-20240620") | .id')
 
           curl -L \
             -X PATCH \
