@@ -87,9 +87,24 @@ jobs:
 
       - name: Release the draft
         run: |
-          # 릴리스 정보 가져오기
-          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases" | jq -r '.[] | select(.tag_name == "${{ steps.version.outputs.tag }}") | .id')
+          # 릴리스 정보 가져오기 및 재시도 로직
+          for i in {1..10}; do
+            RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/releases" | jq -r '.[] | select(.tag_name == "${{ steps.version.outputs.tag }}") | .id')
+
+            if [ -n "$RELEASE_ID" ]; then
+              echo "Release ID found: $RELEASE_ID"
+              break
+            else
+              echo "Release ID not found. Retrying in 1 second..."
+              sleep 1
+            fi
+          done
+
+          if [ -z "$RELEASE_ID" ]; then
+            echo "Failed to find Release ID after 10 attempts."
+            exit 1
+          fi
 
           curl -L \
             -X PATCH \
@@ -101,7 +116,6 @@ jobs:
 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   build-and-deploy:
     needs: release-drafter
     runs-on: ubuntu-latest
