@@ -79,36 +79,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Generate body
-        id: generate-body
-        run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          git_logs=$(git log "$(git describe --tags --abbrev=0)"..HEAD --oneline)
-          git_logs="${git_logs//$'\n'/$'\n'- }"
-          {
-              echo "body<<$EOF"
-              echo "- $git_logs"
-              echo "$EOF"
-          } >>"$GITHUB_OUTPUT"
-
-      - name: Release
-        uses: actions/create-release@v1
+      - name: Run release-drafter
+        uses: release-drafter/release-drafter@v6
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          release_name: ${{ steps.version.outputs.tag }}
-          body: ${{ steps.generate-body.outputs.body }}
+          config-name: release-drafter-configs/create-draft-project.yml
+          version: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          tag: ${{ steps.version.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-#      - name: Run release-drafter
-#        uses: release-drafter/release-drafter@v6
-#        with:
-#          config-name: release-drafter-configs/create-draft-project.yml
-#          version: ${{ steps.version.outputs.tag }}
-#          name: ${{ steps.version.outputs.tag }}
-#          tag: ${{ steps.version.outputs.tag }}
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Release the draft
+        run: |
+          gh api -X PATCH /repos/${{ github.repository }}/releases/${{ steps.version.outputs.tag }} -f draft=false -f prerelease=false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-deploy:
     needs: release-drafter
