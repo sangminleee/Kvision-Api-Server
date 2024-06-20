@@ -69,8 +69,6 @@ jobs:
             curl -s -X DELETE -H "Authorization: token $GITHUB_TOKEN" \
               "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID"
 
-            # 태그 삭제
-            git push origin :refs/tags/$VERSION_TO_DELETE
           else
             echo "Release with tag $VERSION_TO_DELETE not found."
           fi
