@@ -57,6 +57,36 @@ jobs:
           echo "tag=aivi-$date_version"
           echo "tag=aivi-$date_version" >> "$GITHUB_OUTPUT"
 
+      - name: Delete existing release if it exists
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const tag = '${{ steps.version.outputs.tag }}';
+            const { data: releases } = await github.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const release = releases.find(release => release.tag_name === tag);
+            if (release) {
+              await github.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release.id,
+              });
+            }
+            const ref = 'refs/tags/' + tag;
+            try {
+              await github.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: ref,
+              });
+            } catch (error) {
+              if (error.status !== 422) { // 422 means the ref doesn't exist
+                throw error;
+              }
+            }
+
       - name: Run release-drafter
         uses: release-drafter/release-drafter@v6
         with:
