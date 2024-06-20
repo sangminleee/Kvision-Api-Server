@@ -67,6 +67,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
+      - name: Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          release_name: ${{ steps.version.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
   build-and-deploy:
     needs: release-drafter
     runs-on: ubuntu-latest
