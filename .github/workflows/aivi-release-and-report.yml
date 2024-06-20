@@ -91,7 +91,17 @@ jobs:
 
       - name: Release the draft
         run: |
-          gh api -X PATCH /repos/${{ github.repository }}/releases/${{ steps.version.outputs.tag }} -f draft=false -f prerelease=false
+          VERSION_TO_DELETE="${{ steps.version.outputs.tag }}" # 삭제하려는 릴리스 버전
+
+          # 릴리스 정보 가져오기
+          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$VERSION_TO_DELETE" | jq -r '.id')
+
+          gh api \
+          --method PATCH \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/${{ github.repository }}/releases/${{ steps.version.outputs.tag }} -f draft=false -f prerelease=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
